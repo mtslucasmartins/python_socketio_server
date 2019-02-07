@@ -56,12 +56,10 @@ def on_message_created(data):
     # datetime.fromtimestamp(data['createdAt'] / 1e3)
     created_at = datetime.strptime(data['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
-    # jsdate -> %Y-%m-%dT%H:%M:%SZ
-
     message = Message(content=data['content'],
                       contact=Contact.query.filter(Contact.fk_users_id == user_id).first(),
                       chat=data['chat'],
-                      type=data['type'] if 'type' in data else 0,
+                      type=data['type'] if 'type' in data and data['type'] is not None else 0,
                       status=1,
                       updated_at=datetime.now(),
                       created_at=created_at)
