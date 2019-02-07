@@ -62,7 +62,7 @@ class Contact(db.Model):
 
     def as_json(self):
         return {
-            "id": str(self.id),
+            "id": str(round(self.id)),
             "description": self.description,
             "short_description": self.short_description,
             "user": self.user.as_json()
@@ -88,7 +88,7 @@ class Chat(db.Model):
 
     def as_json(self):
         return {
-            "id": str(self.id),
+            "id": str(round(self.id)),
             "subject": self.subject,
             "contactFrom": self.contact_from.as_json(),
             "contactTo": self.contact_to.as_json(),
@@ -156,7 +156,7 @@ class Message(db.Model):
 
     def as_json(self):
         return {
-            "serverId": str(self.server_id),
+            "serverId": str(round(self.server_id)),
             "deviceId": str(self.device_id),
             "contact": self.contact.as_json(),
             "chat": self.chat.as_json(),
