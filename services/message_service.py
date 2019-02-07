@@ -58,6 +58,7 @@ def update_message_set_received(message_id, contact_id, user) -> None:
                 try:
                     sockets.sockets[user_id].emit('message::updated', message.as_json())
                 except Exception as ex:
+                    print("""Exception at message_service.py 'update_message_set_received'""")
                     print(ex)
 
 
