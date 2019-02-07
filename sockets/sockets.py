@@ -11,6 +11,11 @@ sockets = {}
 NAMESPACE = '/messages'
 
 
+@socket_io.on('connect')
+def on_something():
+    print('User connected on something')
+
+
 @socket_io.on('connect', namespace=NAMESPACE)
 def on_connect():
     """Validates user connection.
