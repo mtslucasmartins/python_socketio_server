@@ -24,6 +24,7 @@ def create_message(message):
         # sends the message to the user, if connected.
         if user_id in sockets.sockets:
             try:
+                print('{} -> {}'.format(user_id, user_id in sockets.sockets))
                 sockets.sockets[user_id].emit('message::created', message.as_json())
             except Exception as ex:
                 print(ex)

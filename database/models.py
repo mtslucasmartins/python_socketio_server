@@ -89,7 +89,7 @@ class Chat(db.Model):
     def as_json(self):
         return {
             "id": str(self.id),
-            "subject": self.description,
+            "subject": self.subject,
             "contactFrom": self.contact_from.as_json(),
             "contactTo": self.contact_to.as_json(),
         }
