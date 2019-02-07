@@ -15,7 +15,7 @@ def create_message(message):
 
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
-        user_id = '{}'.format(chat_contact.contact.fk_users_id)
+        user_id = str(round(chat_contact.contact.fk_users_id))
         message_contact = MessageContact(message.server_id, chat_contact.contact.id)
 
         db.session.add(message_contact)

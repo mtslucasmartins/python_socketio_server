@@ -78,7 +78,7 @@ def generate_websocket_ticket():
 
     authorized_tickets[user_ticket] = user_id
 
-    response = json.dumps({'status': 'success', 'ticket': user_ticket})
+    response = json.dumps({'status': 'success', 'userId': user_id, 'ticket': user_ticket})
 
     return response
 
