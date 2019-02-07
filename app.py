@@ -31,6 +31,9 @@ def request_headers_validation():
     header_authorization = request.headers.get('Authorization')
     header_authorization = '' if header_authorization is None else header_authorization
 
+    if request.method == 'OPTIONS':
+        return
+
     if header_authorization.startswith('Bearer '):
         header_authorization = header_authorization.replace('Bearer ', '')
         request_context.user = Session.query.filter(Session.token == header_authorization).limit(1)[0].user
