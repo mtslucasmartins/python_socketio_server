@@ -23,6 +23,8 @@ def on_connect():
     Receives a User ID and Ticket and validates with authorized tickets
     disconnects if ticket isn't valid.
     """
+    print('User connected on /messages')
+
     # request arguments for ticket validation.
     user_id = str(request.args.get('user_id'))
     user_ticket = str(request.args.get('ticket'))
