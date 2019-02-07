@@ -30,7 +30,7 @@ def create_message(message):
                 print(ex)
 
 
-def update_message_set_received(message_id, contact_id, user) -> None:
+def update_message_set_received(message_id, contact_id) -> None:
     """Sets a Message as Received by Message Id and Contact Id."""
     message = Message.query.filter(Message.server_id == message_id).first()
     contact = Contact.query.filter(Contact.id == contact_id).first()
