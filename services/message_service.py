@@ -3,15 +3,15 @@ from database.models import ChatContacts, Message, MessageContact, Contact
 from sockets import sockets
 
 
-def create_message(message: Message) -> None:
+def create_message(message):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
-    # Search for contacts related to the conversation.
-    chat_contacts = ChatContacts.query.filter(ChatContacts.fk_chats_id == message.fk_chats_id)
-
     # Inserts the message to the database, and flushes it in order to get the generated id.
     db.session.add(message)
     db.session.flush()
     db.session.commit()
+
+    # Search for contacts related to the conversation.
+    chat_contacts = ChatContacts.query.filter(ChatContacts.fk_chats_id == message.fk_chats_id)
 
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:

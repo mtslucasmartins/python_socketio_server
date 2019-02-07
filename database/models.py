@@ -140,9 +140,6 @@ class Message(db.Model):
 
         self.content = kwargs['content'] if 'content' in kwargs else None
 
-        self.contact = kwargs['contact'] if 'contact' in kwargs else None
-        self.chat = kwargs['chat'] if 'chat' in kwargs else None
-
         self.fk_contacts_id = kwargs['fk_contacts_id'] if 'fk_contacts_id' in kwargs else None
         self.fk_chats_id = kwargs['fk_chats_id'] if 'fk_chats_id' in kwargs else None
 
