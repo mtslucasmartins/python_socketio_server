@@ -54,7 +54,7 @@ def on_message_created(data):
     user_id = str(request.args.get('user_id'))
 
     # datetime.fromtimestamp(data['createdAt'] / 1e3)
-    created_at = datetime.strptime(data['createdAt'], '%Y-%m-%dT%H:%M:%SZ')
+    created_at = datetime.strptime(data['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
     # jsdate -> %Y-%m-%dT%H:%M:%SZ
 
