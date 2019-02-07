@@ -2,7 +2,7 @@ import base64
 import json
 import time
 import uuid
-from settings import DATABASE_URI
+from settings import DATABASE_URI, PORT
 from database import db as database
 from database.models import User, Session
 from sockets.sockets import *
@@ -85,4 +85,4 @@ def update_message_set_seen(message_id, contact_id):
 
 
 if __name__ == "__main__":
-    socket_io.run(app, host='0.0.0.0', debug=True)
+    socket_io.run(app, host='0.0.0.0', port=PORT, debug=True)
