@@ -36,28 +36,29 @@ def update_message_set_received(message_id, contact_id, user=None) -> None:
 
     message = Message.query.filter(Message.server_id == message_id).first()
 
-    db.session.query() \
+    db.session.query(MessageContact) \
         .filter(MessageContact.fk_messages_id == message_id
                 and MessageContact.fk_contacts_id == contact_id) \
-        .update({MessageContact.is_received: True})
+        .update({'is_received': True})
     db.session.commit()
 
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
-    if message.status < 2:
-        message.status = 2
+    if user.contact.id != contact_id:
+        if message.status < 2:
+            message.status = 2
 
-        db.session.query() \
-            .filter(Message.server_id == message_id) \
-            .update({'status': message.status})
-        db.session.commit()
+            db.session.query(Message) \
+                .filter(Message.server_id == message_id) \
+                .update({'status': message.status})
+            db.session.commit()
 
-        # sends the message to the user, if connected.
-        if user.id in sockets.sockets:
-            try:
-                sockets.sockets[user.id].emit('message::updated', message.as_json())
-            except Exception as ex:
-                print(ex)
+            # sends the message to the user, if connected.
+            if user.id in sockets.sockets:
+                try:
+                    sockets.sockets[user.id].emit('message::updated', message.as_json())
+                except Exception as ex:
+                    print(ex)
 
 
 def update_message_set_seen(message_id, contact_id, user=None) -> None:
