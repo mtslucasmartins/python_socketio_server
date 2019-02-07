@@ -5,6 +5,7 @@ from sockets import sockets
 
 def create_message(message):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
+
     # Inserts the message to the database, and flushes it in order to get the generated id.
     db.session.add(message)
     db.session.flush()
@@ -24,7 +25,6 @@ def create_message(message):
         # sends the message to the user, if connected.
         if user_id in sockets.sockets:
             try:
-                print('{} -> {}'.format(user_id, user_id in sockets.sockets))
                 sockets.sockets[user_id].emit('message::created', message.as_json())
             except Exception as ex:
                 print(ex)
@@ -39,7 +39,7 @@ def update_message_set_received(message_id, contact_id, user=None) -> None:
     db.session.query() \
         .filter(MessageContact.fk_messages_id == message_id
                 and MessageContact.fk_contacts_id == contact_id) \
-        .update({'is_received': True})
+        .update({MessageContact.is_received: True})
     db.session.commit()
 
     # if the message is not yet received by any user,
