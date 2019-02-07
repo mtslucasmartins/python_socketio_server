@@ -32,7 +32,7 @@ class Session(db.Model):
     updated_at = db.Column(db.Date(), unique=False)
 
     fk_users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User')
+    user = db.relationship('User', foreign_keys='Session.fk_users_id')
 
     def __repr__(self):
         return str(json.dumps(self.as_json()))
