@@ -35,11 +35,15 @@ def on_connect():
     if user_ticket in authorized_tickets:
         is_valid = authorized_tickets[user_ticket] == user_id
 
-    # if the ticket is valid saves the session, else disconnects the user.
-    sockets[user_id] = Socket(request.sid) if is_valid else disconnect()
-
-    # emits an event of successful connection
-    sockets[user_id].emit('connect::success', {})
+    if is_valid:
+        sockets[user_id] = Socket(request.sid)
+        # emits an event of successful connection
+        sockets[user_id].emit('connect::success', {})
+        
+    else:
+        # emits an event of successful connection
+        sockets[user_id].emit('connect::failed', {})
+        disconnect()
 
 
 @socket_io.on('disconnect', namespace=NAMESPACE)
