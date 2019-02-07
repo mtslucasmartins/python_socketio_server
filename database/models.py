@@ -155,19 +155,16 @@ class Message(db.Model):
         return str(json.dumps(self.as_json()))
 
     def as_json(self):
-        (dt, micro) = self.created_at.strftime('%Y%m%d%H%M%S.%f').split('.')
-        created_at = "%s%03d" % (dt, int(micro) / 1000)
-
-        (dt, micro) = self.updated_at.strftime('%Y%m%d%H%M%S.%f').split('.')
-        updated_at = "%s%03d" % (dt, int(micro) / 1000)
+        created_at = time.mktime(self.created_at.timetuple())*1e3 + self.created_at.microsecond/1e3
+        updated_at = time.mktime(self.updated_at.timetuple())*1e3 + self.created_at.microsecond/1e3
 
         return {
             "serverId": str(round(self.server_id)),
             "deviceId": str(self.device_id),
             "contact": self.contact.as_json(),
             "chat": self.chat.as_json(),
-            "createdAt": created_at,
-            "updatedAt": updated_at,
+            "createdAt": created_at,  # time.mktime(self.created_at.timetuple()) * 1e3,
+            "updatedAt": updated_at,  # time.mktime(self.updated_at.timetuple()) * 1e3,
             "content": self.content,
             "status": self.status,
             "type": self.type
