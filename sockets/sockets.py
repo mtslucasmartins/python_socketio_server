@@ -59,7 +59,7 @@ def on_message_created(data):
     print(message_type)
 
     message = Message(content=data['content'],
-                      fk_contact_id=Contact.query.filter(Contact.fk_users_id == user_id).first().id,
+                      fk_contacts_id=Contact.query.filter(Contact.fk_users_id == user_id).first().id,
                       fk_chats_id=data['chat']['id'],
                       type=message_type,
                       status=1,
