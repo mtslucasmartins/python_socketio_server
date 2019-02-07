@@ -64,7 +64,7 @@ class Contact(db.Model):
         return {
             "id": str(round(self.id)),
             "description": self.description,
-            "short_description": self.short_description,
+            "shortDescription": self.short_description,
             "user": self.user.as_json()
         }
 
