@@ -42,21 +42,21 @@ def request_headers_validation():
         abort(401)
 
 
-@cross_origin()
 @app.route('/services/users/info')
+@cross_origin()
 def users_info():
     return json.dumps(request_context.user.as_json())
 
 
-@cross_origin()
 @app.route('/services/sockets/info')
+@cross_origin()
 def sockets_info():
     print([s for s in sockets])
     return json.dumps([s for s in sockets])
 
 
-@cross_origin()
 @app.route("/services/users/<user_id>")
+@cross_origin()
 def get_users_by_id(user_id):
     start = time.time()
 
@@ -67,8 +67,8 @@ def get_users_by_id(user_id):
     return dumps
 
 
-@cross_origin()
 @app.route("/services/auth/ticket")
+@cross_origin()
 def generate_websocket_ticket():
     user_id = str(round(request_context.user.id))
     user_ticket = str(uuid.uuid4())
@@ -80,15 +80,15 @@ def generate_websocket_ticket():
     return response
 
 
-@cross_origin()
 @app.route("/services/messages/<message_id>/received/<contact_id>")
+@cross_origin()
 def update_message_set_received(message_id, contact_id):
     message_service.update_message_set_received(message_id, contact_id, request_context.user)
     return json.dumps({'status': 'success'})
 
 
-@cross_origin()
 @app.route("/services/messages/<message_id>/seen/<contact_id>")
+@cross_origin()
 def update_message_set_seen(message_id, contact_id):
     message_service.update_message_set_seen(message_id, contact_id, request_context.user)
     return json.dumps({'status': 'success'})
