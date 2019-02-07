@@ -51,6 +51,6 @@ def on_message_created(data):
                       type=data['type'] if 'type' in data else 0,
                       status=1,
                       updated_at=datetime.now(),
-                      created_at=datetime.fromtimestamp(data['created_at'] / 1e3))
+                      created_at=datetime.fromtimestamp(data['createdAt'] / 1e3))
 
     message_service.create_message(message)
