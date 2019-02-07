@@ -36,7 +36,7 @@ def request_headers_validation():
 
     if header_authorization.startswith('Bearer '):
         header_authorization = header_authorization.replace('Bearer ', '')
-        request_context.user = Session.query.filter(Session.token == header_authorization).limit(1)[0].user
+        request_context.user = Session.query.filter(Session.token == header_authorization).first().user
     elif header_authorization.startswith('Basic '):
         header_authorization = header_authorization.replace('Basic ', '')
         (username, password) = base64.b64decode(header_authorization.encode()).decode().split(':')
