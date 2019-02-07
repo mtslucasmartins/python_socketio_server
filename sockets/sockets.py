@@ -50,6 +50,7 @@ def on_disconnect():
 
 @socket_io.on('message::created', namespace=NAMESPACE)
 def on_message_created(data):
+    print('on_message_created')
     user_id = str(request.args.get('user_id'))
 
     message = Message(content=data['content'],
