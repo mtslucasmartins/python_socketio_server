@@ -74,3 +74,12 @@ def on_message_created(data):
                       created_at=message_created_at)
 
     message_service.create_message(message)
+
+
+@socket_io.on('message::received', namespace=NAMESPACE)
+def on_message_received(data):
+    """Sets a Message as received by a User."""
+    message_id = data.get('serverId')
+    contact_id = data.get('contact').get('id')
+
+    message_service.update_message_set_received(message_id, contact_id)
