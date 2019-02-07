@@ -30,9 +30,9 @@ def create_message(message):
                 print(ex)
 
 
-def update_message_set_received(message_id, contact_id, user=None) -> None:
+def update_message_set_received(message_id, contact_id, user) -> None:
     """Sets a Message as Received by Message Id and Contact Id."""
-    user = user if user is not None else Contact.query.filter(Contact.id == contact_id).first().user
+    contact = Contact.query.filter(Contact.id == contact_id).first()
 
     message = Message.query.filter(Message.server_id == message_id).first()
 
@@ -44,7 +44,7 @@ def update_message_set_received(message_id, contact_id, user=None) -> None:
 
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
-    if user.contact.id != contact_id:
+    if contact.user.id != user.id:
         if message.status < 2:
             message.status = 2
 
