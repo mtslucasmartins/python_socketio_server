@@ -38,6 +38,9 @@ def on_connect():
     # if the ticket is valid saves the session, else disconnects the user.
     sockets[user_id] = Socket(request.sid) if is_valid else disconnect()
 
+    # emits an event of successful connection
+    sockets[user_id].emit('connect::success', {})
+
 
 @socket_io.on('disconnect', namespace=NAMESPACE)
 def on_disconnect():
