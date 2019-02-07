@@ -56,7 +56,7 @@ def update_message_set_received(message_id, contact_id, user) -> None:
             # sends the message to the user, if connected.
             if user_id in sockets.sockets:
                 try:
-                    sockets.sockets[user.id].emit('message::updated', message.as_json())
+                    sockets.sockets[user_id].emit('message::updated', message.as_json())
                 except Exception as ex:
                     print(ex)
 

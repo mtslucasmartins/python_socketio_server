@@ -18,7 +18,7 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 database.init_app(app)
-socket_io.init_app(app)
+socket_io.init_app(app, ping_timeout=45, ping_interval=15)
 
 
 @app.errorhandler(401)
