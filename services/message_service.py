@@ -32,9 +32,8 @@ def create_message(message):
 
 def update_message_set_received(message_id, contact_id, user) -> None:
     """Sets a Message as Received by Message Id and Contact Id."""
-    contact = Contact.query.filter(Contact.id == contact_id).first()
-
     message = Message.query.filter(Message.server_id == message_id).first()
+    contact = Contact.query.filter(Contact.id == contact_id).first()
 
     db.session.query(MessageContact) \
         .filter(MessageContact.fk_messages_id == message_id
@@ -44,7 +43,8 @@ def update_message_set_received(message_id, contact_id, user) -> None:
 
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
-    if contact.user.id != user.id:
+    if contact.id != message.contact.id:
+        user_id = str(round(message.contact.user.id))
         if message.status < 2:
             message.status = 2
 
@@ -54,7 +54,7 @@ def update_message_set_received(message_id, contact_id, user) -> None:
             db.session.commit()
 
             # sends the message to the user, if connected.
-            if user.id in sockets.sockets:
+            if user_id in sockets.sockets:
                 try:
                     sockets.sockets[user.id].emit('message::updated', message.as_json())
                 except Exception as ex:
