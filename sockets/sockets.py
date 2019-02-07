@@ -54,14 +54,16 @@ def on_message_created(data):
     user_id = str(request.args.get('user_id'))
 
     # datetime.fromtimestamp(data['createdAt'] / 1e3)
-    created_at = datetime.strptime(data['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    message_created_at = datetime.strptime(data['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    message_type = data['type'] if 'type' in data and data['type'] is not None else 0
 
-    message = Message(content=data['content'],
-                      contact=Contact.query.filter(Contact.fk_users_id == user_id).first(),
-                      chat=data['chat'],
-                      type=data['type'] if 'type' in data and data['type'] is not None else 0,
+    # Contact.query.filter(Contact.fk_users_id == user_id).first(),
+    message = Message(content=data.get('content'),
+                      fk_contacts_id=data.get('contact').get('id'),
+                      fk_chats_id=data.get('chat').get('id'),
+                      type=message_type,
                       status=1,
                       updated_at=datetime.now(),
-                      created_at=created_at)
+                      created_at=message_created_at)
 
     message_service.create_message(message)
