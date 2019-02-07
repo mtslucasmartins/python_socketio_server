@@ -1,5 +1,5 @@
 from flask import request
-from flask_socketio import disconnect
+from flask_socketio import disconnect, emit
 from database.models import Message, Contact
 from services import message_service
 from sockets import Socket, socket_io
@@ -39,10 +39,10 @@ def on_connect():
         sockets[user_id] = Socket(request.sid)
         # emits an event of successful connection
         sockets[user_id].emit('connect::success', {})
-        
+
     else:
         # emits an event of successful connection
-        sockets[user_id].emit('connect::failed', {})
+        emit('connect::failed', {}, room=request.sid)
         disconnect()
 
 
