@@ -135,6 +135,20 @@ class Message(db.Model):
     chat = db.relationship('Chat', foreign_keys='Message.fk_chats_id')
 
     def __init__(self, **kwargs):
+        self.server_id = kwargs['server_id'] if 'server_id' in kwargs else None
+        self.device_id = kwargs['device_id'] if 'device_id' in kwargs else None
+
+        self.content = kwargs['content'] if 'content' in kwargs else None
+
+        self.contact = kwargs['contact'] if 'contact' in kwargs else None
+        self.chat = kwargs['chat'] if 'chat' in kwargs else None
+
+        self.fk_contacts_id = kwargs['fk_contacts_id'] if 'fk_contacts_id' in kwargs else None
+        self.fk_chats_id = kwargs['fk_chats_id'] if 'fk_chats_id' in kwargs else None
+
+        self.status = kwargs['status'] if 'status' in kwargs else 0
+        self.type = kwargs['type'] if 'type' in kwargs else 0
+
         self.created_at = kwargs['created_at'] if 'created_at' in kwargs else datetime.datetime.fromtimestamp(
             kwargs['created_at'] / 1e3)
         self.updated_at = kwargs['updated_at'] if 'updated_at' in kwargs else datetime.datetime.fromtimestamp(
