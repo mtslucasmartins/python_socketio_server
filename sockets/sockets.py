@@ -62,7 +62,7 @@ def on_message_created(data):
     message = Message(content=data['content'],
                       contact=Contact.query.filter(Contact.fk_users_id == user_id).first(),
                       chat=data['chat'],
-                      type=,
+                      type=message_type,
                       status=1,
                       updated_at=datetime.now(),
                       created_at=message_created_at)
