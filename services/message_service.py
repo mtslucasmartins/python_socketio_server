@@ -66,7 +66,7 @@ def update_message_set_seen(message_id, contact_id) -> None:
     message = Message.query.filter(Message.server_id == message_id).first()
     contact = Contact.query.filter(Contact.id == contact_id).first()
 
-    db.session.query() \
+    db.session.query(MessageContact) \
         .filter(MessageContact.fk_messages_id == message_id
                 and MessageContact.fk_contacts_id == contact_id) \
         .update({'is_received': True, 'is_seen': True})
