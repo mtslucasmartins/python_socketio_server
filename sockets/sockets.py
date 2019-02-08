@@ -83,3 +83,12 @@ def on_message_received(data):
     contact_id = data.get('contact').get('id')
 
     message_service.update_message_set_received(message_id, contact_id)
+
+
+@socket_io.on('message::seen', namespace=NAMESPACE)
+def on_message_received(data):
+    """Sets a Message as received by a User."""
+    message_id = data.get('serverId')
+    contact_id = data.get('contact').get('id')
+
+    message_service.update_message_set_seen(message_id, contact_id)
