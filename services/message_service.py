@@ -44,21 +44,22 @@ def update_message_set_received(message_id, contact_id) -> None:
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
-        user_id = str(round(message.contact.user.id))
-        if message.status < 2:
-            message.status = 2
-            db.session.query(Message) \
-                .filter(Message.server_id == message_id) \
-                .update({'status': message.status})
-            db.session.commit()
+        if contact.user != None:
+            user_id = str(round(message.contact.user.id))
+            if message.status < 2:
+                message.status = 2
+                db.session.query(Message) \
+                    .filter(Message.server_id == message_id) \
+                    .update({'status': message.status})
+                db.session.commit()
 
-            # sends the message to the user, if connected.
-            if user_id in sockets.sockets:
-                try:
-                    sockets.sockets[user_id].emit('message::updated', message.as_json())
-                except Exception as ex:
-                    print("""Exception at message_service.py 'update_message_set_received'""")
-                    print(ex)
+                # sends the message to the user, if connected.
+                if user_id in sockets.sockets:
+                    try:
+                        sockets.sockets[user_id].emit('message::updated', message.as_json())
+                    except Exception as ex:
+                        print("""Exception at message_service.py 'update_message_set_received'""")
+                        print(ex)
 
 
 def update_message_set_seen(message_id, contact_id) -> None:
