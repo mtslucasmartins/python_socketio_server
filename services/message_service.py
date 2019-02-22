@@ -28,6 +28,7 @@ def create_message(message):
                 try:
                     sockets.sockets[user_id].emit('message::created', message.as_json())
                 except Exception as ex:
+                        print("""Exception at message_service.py 'create_message'""")
                     print(ex)
 
 
