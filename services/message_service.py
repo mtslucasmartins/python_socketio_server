@@ -44,7 +44,7 @@ def update_message_set_received(message_id, contact_id) -> None:
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
-        if contact.user != None:
+        if message.contact.user != None:
             user_id = str(round(message.contact.user.id))
             if message.status < 2:
                 message.status = 2
