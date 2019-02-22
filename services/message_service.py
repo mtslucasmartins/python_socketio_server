@@ -16,18 +16,19 @@ def create_message(message):
 
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
-        user_id = str(round(chat_contact.contact.fk_users_id))
-        message_contact = MessageContact(message.server_id, chat_contact.contact.id)
+        if chat_contact.contact.fk_users_id != None:
+            user_id = str(round(chat_contact.contact.fk_users_id))
+            message_contact = MessageContact(message.server_id, chat_contact.contact.id)
 
-        db.session.add(message_contact)
-        db.session.commit()
+            db.session.add(message_contact)
+            db.session.commit()
 
-        # sends the message to the user, if connected.
-        if user_id in sockets.sockets:
-            try:
-                sockets.sockets[user_id].emit('message::created', message.as_json())
-            except Exception as ex:
-                print(ex)
+            # sends the message to the user, if connected.
+            if user_id in sockets.sockets:
+                try:
+                    sockets.sockets[user_id].emit('message::created', message.as_json())
+                except Exception as ex:
+                    print(ex)
 
 
 def update_message_set_received(message_id, contact_id) -> None:
@@ -76,18 +77,19 @@ def update_message_set_seen(message_id, contact_id) -> None:
     # if the message is not yet viewed,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
-        user_id = str(round(message.contact.user.id))
-        if message.status < 3:
-            message.status = 3
-            db.session.query(Message) \
-                .filter(Message.server_id == message_id) \
-                .update({'status': message.status})
-            db.session.commit()
+        if message.contact.user != None:
+            user_id = str(round(message.contact.user.id))
+            if message.status < 3:
+                message.status = 3
+                db.session.query(Message) \
+                    .filter(Message.server_id == message_id) \
+                    .update({'status': message.status})
+                db.session.commit()
 
-            # sends the message to the user, if connected.
-            if user_id in sockets.sockets:
-                try:
-                    sockets.sockets[user_id].emit('message::updated', message.as_json())
-                except Exception as ex:
-                    print("""Exception at message_service.py 'update_message_set_seen'""")
-                    print(ex)
+                # sends the message to the user, if connected.
+                if user_id in sockets.sockets:
+                    try:
+                        sockets.sockets[user_id].emit('message::updated', message.as_json())
+                    except Exception as ex:
+                        print("""Exception at message_service.py 'update_message_set_seen'""")
+                        print(ex)
