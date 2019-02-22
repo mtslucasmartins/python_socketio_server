@@ -10,12 +10,17 @@ def create_message(message):
     db.session.add(message)
     db.session.flush()
     db.session.commit()
-
+    
+    # gets the reference by id from database.
+    message = Message.query.filter(Message.server_id == message.server_id).first()
+    
     # Search for contacts related to the conversation.
     chat_contacts = ChatContacts.query.filter(ChatContacts.fk_chats_id == message.fk_chats_id)
 
+
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
+        
         if chat_contact.contact.fk_users_id != None:
             user_id = str(round(chat_contact.contact.fk_users_id))
             message_contact = MessageContact(message.server_id, chat_contact.contact.id)
