@@ -160,8 +160,11 @@ class Message(db.Model):
         created_at = time.mktime(self.created_at.timetuple())*1e3 + self.created_at.microsecond/1e3
         updated_at = time.mktime(self.updated_at.timetuple())*1e3 + self.created_at.microsecond/1e3
 
-        json['serverId'] = str(round(self.server_id)) 
-        json['deviceId'] = str(round(self.device_id)) 
+        if self.server_id is not None:
+            json['serverId'] = str(round(self.server_id)) 
+        
+        if self.device_id is not None:
+            json['deviceId'] = str(round(self.device_id)) 
         
         json['content'] = self.content
 
