@@ -155,21 +155,29 @@ class Message(db.Model):
         return str(json.dumps(self.as_json()))
 
     def as_json(self):
+        json = {}
+
         created_at = time.mktime(self.created_at.timetuple())*1e3 + self.created_at.microsecond/1e3
         updated_at = time.mktime(self.updated_at.timetuple())*1e3 + self.created_at.microsecond/1e3
 
-        return {
-            "serverId": str(round(self.server_id)),
-            "deviceId": str(self.device_id),
-            "contact": self.contact.as_json(),
-            "chat": self.chat.as_json(),
-            "createdAt": created_at,  # time.mktime(self.created_at.timetuple()) * 1e3,
-            "updatedAt": updated_at,  # time.mktime(self.updated_at.timetuple()) * 1e3,
-            "content": self.content,
-            "status": self.status,
-            "type": self.type
-        }
+        json['serverId'] = str(round(self.server_id)) 
+        json['deviceId'] = str(round(self.device_id)) 
+        
+        json['content'] = self.content
 
+        if self.contact is not None:
+            json['contact'] = self.contact.as_json()
+
+        if self.chat is not None:
+            json['chat'] = self.chat.as_json()
+
+        json['createdAt'] = created_at
+        json['updatedAt'] = updated_at
+    
+        json['status'] = self.status
+        json['type'] = self.type
+
+        return json
 
 class MessageContact(db.Model):
     __tablename__ = 'messages_contacts'
