@@ -54,19 +54,26 @@ class Contact(db.Model):
     description = db.Column(db.String(), unique=True)
     short_description = db.Column(db.String(), unique=False)
 
-    fk_users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User')
+    fk_users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user = db.relationship('User', foreign_keys='Contact.fk_users_id')
 
     def __repr__(self):
         return str(json.dumps(self.as_json()))
 
     def as_json(self):
-        return {
-            "id": str(round(self.id)),
-            "description": self.description,
-            "shortDescription": self.short_description,
-            "user": self.user.as_json()
-        }
+        json = {}
+
+        if self.id is not None:
+            json['id'] = str(round(self.id))
+
+        json['description'] = self.description
+        json['shortDescription'] = self.short_description
+
+        if self.user is not None:
+            json['user'] = self.user.as_json()
+
+        
+        return json
 
 
 class Chat(db.Model):
