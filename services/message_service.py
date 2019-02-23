@@ -41,8 +41,8 @@ def update_message_set_received(message_id, contact_id) -> None:
     contact = Contact.query.filter(Contact.id == contact_id).first()
 
     db.session.query(MessageContact) \
-        .filter(MessageContact.fk_messages_id == message_id
-                and MessageContact.fk_contacts_id == contact_id) \
+        .filter(MessageContact.fk_messages_id == message_id,
+                MessageContact.fk_contacts_id == contact_id) \
         .update({'is_received': True})
     db.session.commit()
 
@@ -73,8 +73,8 @@ def update_message_set_seen(message_id, contact_id) -> None:
     contact = Contact.query.filter(Contact.id == contact_id).first()
 
     db.session.query(MessageContact) \
-        .filter(MessageContact.fk_messages_id == message_id
-                and MessageContact.fk_contacts_id == contact_id) \
+        .filter(MessageContact.fk_messages_id == message_id,
+                MessageContact.fk_contacts_id == contact_id) \
         .update({'is_received': True, 'is_seen': True})
     db.session.commit()
 
