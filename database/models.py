@@ -198,8 +198,8 @@ class MessageContact(db.Model):
     fk_contacts_id = db.Column(db.Integer, db.ForeignKey('contacts.id'), nullable=False, primary_key=True)
     contact = db.relationship('Contact', foreign_keys='MessageContact.fk_contacts_id')
 
-    is_received =   (db.Boolean, unique=False, nullable=True)
-    is_seen = db.Column(db.Boolean, unique=False, nullable=True)
+    is_received = (db.Boolean, unique=False, nullable=True, default=False)
+    is_seen = db.Column(db.Boolean, unique=False, nullable=True, default=False)
 
     def __init__(self, fk_messages_id=None, fk_contacts_id=None, is_received=False, is_seen=False):
         self.fk_messages_id = fk_messages_id
