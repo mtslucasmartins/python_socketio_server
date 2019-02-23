@@ -20,8 +20,7 @@ def create_message(message):
 
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
-        
-        if chat_contact.contact.fk_users_id != None:
+        if chat_contact.contact.fk_users_id is not None:
             user_id = str(round(chat_contact.contact.fk_users_id))
             message_contact = MessageContact(message.server_id, chat_contact.contact.id)
 
@@ -51,7 +50,7 @@ def update_message_set_received(message_id, contact_id) -> None:
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
-        if message.contact.user != None:
+        if message.contact.user is not None:
             user_id = str(round(message.contact.user.id))
             if message.status < 2:
                 message.status = 2
@@ -83,7 +82,7 @@ def update_message_set_seen(message_id, contact_id) -> None:
     # if the message is not yet viewed,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
-        if message.contact.user != None:
+        if message.contact.user is not None:
             user_id = str(round(message.contact.user.id))
             if message.status < 3:
                 message.status = 3
