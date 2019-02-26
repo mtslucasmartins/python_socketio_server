@@ -46,6 +46,8 @@ def update_message_set_received(message_id, contact_id) -> None:
         .update({'is_received': True})
     db.session.commit()
 
+    set_received_before_id(message_id, contact_id)
+
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
@@ -78,6 +80,8 @@ def update_message_set_seen(message_id, contact_id) -> None:
         .update({'is_received': True, 'is_seen': True})
     db.session.commit()
 
+    set_seen_before_id(message_id, contact_id)
+
     # if the message is not yet viewed,
     # updates the reference and emits a message to the sender.
     if contact.id != message.contact.id:
@@ -97,3 +101,46 @@ def update_message_set_seen(message_id, contact_id) -> None:
                     except Exception as ex:
                         print("""Exception at message_service.py 'update_message_set_seen'""")
                         print(ex)
+
+
+def set_received_before_id(message_id, contact_id) -> None:
+    """Sets a Message as Read by Message Id and Contact Id."""
+    message = Message.query.filter(Message.server_id == message_id).first()
+    contact = Contact.query.filter(Contact.id == contact_id).first()
+
+    db.session.query(MessageContact) \
+        .filter(MessageContact.fk_messages_id < message_id,
+                MessageContact.fk_contacts_id == contact_id) \
+        .update({'is_received': True})
+    db.session.commit()
+
+    if contact.id != message.contact.id:
+        message.status = 2
+        db.session.query(Message) \
+            .filter(Message.server_id < message_id) \
+            .filter(Message.status < message.status) \
+            .update({'status': message.status})
+        db.session.commit()
+
+
+def set_seen_before_id(message_id, contact_id) -> None:
+    """Sets a Message as Received by Message Id and Contact Id."""
+    message = Message.query.filter(Message.server_id == message_id).first()
+    contact = Contact.query.filter(Contact.id == contact_id).first()
+
+    db.session.query(MessageContact) \
+        .filter(MessageContact.fk_messages_id < message_id,
+                MessageContact.fk_contacts_id == contact_id) \
+        .update({'is_received': True, 'is_seen': True})
+    db.session.commit()
+
+    if contact.id != message.contact.id:
+        message.status = 3
+        db.session.query(Message) \
+            .filter(Message.server_id < message_id) \
+            .filter(Message.status < message.status) \
+            .update({'status': message.status})
+        db.session.commit()
+
+
+
