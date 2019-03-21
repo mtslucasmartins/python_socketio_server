@@ -73,3 +73,5 @@ def send_webpush_notification(notification, endpoint):
                 extra.errno,
                 extra.message
                 )
+    except Exception as e:
+        print('Other stuff')
