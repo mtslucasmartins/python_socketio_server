@@ -6,8 +6,6 @@ from sockets import sockets
 import json
 
 
-
-
 def create_message(message):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
 
@@ -39,9 +37,15 @@ def create_message(message):
                     # Web Push Notifications
                     user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == user_id)
                     print('Iteating over user endpoints...')
-                    for user_endpoint in user_endpoints:                        
+                    for user_endpoint in user_endpoints:
+                        data = notifications.WebPushNotificationData()
+                        action = notifications.WebPushNotificationAction("teste", "Go to the site")
+
+                        notification = notifications.WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", data)
+                        notification.append_action(action)
+                        
                         print('Sending Notification.')
-                        notifications.WebPushNotification.send_webpush_notification(message.chat.subject, "Novas Mensagens", json.loads(user_endpoint.endpoint))
+                        notifications.send_webpush_notification(notification, json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
