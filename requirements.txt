@@ -15,6 +15,7 @@ py-vapid==1.4.0
 pycodestyle==2.5.0
 pycparser==2.19
 pylint==2.2.2
+python-dotenv==0.10.1
 pywebpush==1.9.1
 requests==2.21.0
 six==1.12.0
