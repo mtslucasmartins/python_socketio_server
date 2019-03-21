@@ -1,20 +1,25 @@
 from pywebpush import webpush, WebPushException
+
 from datetime import datetime
+from pytz import timezone
+
 import json
 
 public_key = "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u3Q36JdjLLk69WYNWJ2rOw"
 private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
 
 
+timezone = timezone('America/Sao Paulo')
+
 class WebPushNotificationData:
     """"""
-    def __init__(self, date_of_arrival = datetime.now().isoformat(), primary_key = 1):
+    def __init__(self, date_of_arrival = datetime.now(), primary_key = 1):
         self.date_of_arrival = date_of_arrival
         self.primary_key = primary_key
 
     def json(self):
         return {
-            "dateOfArrival": self.date_of_arrival,
+            "dateOfArrival": self.date_of_arrival.astimezone(timezone).isoformat(),
             "primaryKey": self.primary_key
         }
 
