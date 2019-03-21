@@ -40,8 +40,11 @@ def create_message(message):
                     for user_endpoint in user_endpoints:
                         print('Endoint {}'.format(user_endpoint.endpoint))
                         data = WebPushNotificationData()
-                        notification = WebPushNotification("title", "body", "icon", data)
+                        action = WebPushNotificationAction("teste", "Go to the site")
 
+                        notification = WebPushNotification("Angular News", "Newsletter Available!", "assets/icon-512x512.png", data)
+                        notification.append_action(action)
+                        
                         print('Sending Notification.')
                         send_webpush_notification(notification.json(), json.loads(user_endpoint.endpoint))
 
