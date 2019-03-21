@@ -3,7 +3,7 @@ from pywebpush import webpush, WebPushException
 from datetime import datetime
 
 import json
-import pytz
+# import pytz
 
 # WARNING
 import sys
@@ -13,7 +13,7 @@ public_key = "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u
 private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
 
 
-timezone = pytz.timezone('America/Sao_Paulo')
+# timezone = pytz.timezone('America/Sao_Paulo')
 
 class WebPushNotificationData:
     """"""
@@ -23,7 +23,7 @@ class WebPushNotificationData:
 
     def json(self):
         return {
-            "dateOfArrival": self.date_of_arrival.astimezone(timezone).isoformat(),
+            "dateOfArrival": self.date_of_arrival.isoformat(), # .astimezone(timezone).isoformat(),
             "primaryKey": self.primary_key
         }
 
@@ -74,7 +74,7 @@ def send_webpush_notification(notification, endpoint):
                 "body": notification.body,
                 "vibrate": notification.vibrate,
                 "data": {
-                    "dateOfArrival": notification.data.date_of_arrival.astimezone(timezone).isoformat(),
+                    "dateOfArrival": notification.data.date_of_arrival.isoformat(), # .astimezone(timezone).isoformat(),
                     "primaryKey": notification.data.primary_key
                 }
             }
