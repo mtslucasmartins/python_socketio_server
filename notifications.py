@@ -62,12 +62,23 @@ class WebPushNotification:
 
 def send_webpush_notification(notification, endpoint):
     try:
-        print(json.dumps(notification))
-        print(json.dumps(endpoint))
+        body = json.dumps({
+            "notification": {
+                "title": notification.title,
+                "icon": notification.icon,
+                "body": notification.body,
+                "vibrate": notification.vibrate,
+                "data": {
+                    "dateOfArrival": notification.data.date_of_arrival,
+                    "primaryKey": notification.data.primary_key
+                },
+                "actions": notification.actions
+            }
+        })
 
         webpush(
             subscription_info=endpoint,
-            data=json.dumps({"notification": notification}),
+            data=body,
             vapid_private_key=private_key,  # "mp5xYHWtRTyCA63nZMvmJ_qmYO6A1klSotcoppSx-MI",
             vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
         )

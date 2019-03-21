@@ -38,7 +38,6 @@ def create_message(message):
                     user_endpoints = UserEndpoint.query.filter(UserEndpoint.fk_users_id == user_id)
                     print('Iteating over user endpoints...')
                     for user_endpoint in user_endpoints:
-                        print('Endoint {}'.format(user_endpoint.endpoint))
                         data = WebPushNotificationData()
                         action = WebPushNotificationAction("teste", "Go to the site")
 
@@ -46,7 +45,7 @@ def create_message(message):
                         notification.append_action(action)
                         
                         print('Sending Notification.')
-                        send_webpush_notification(notification.json(), json.loads(user_endpoint.endpoint))
+                        send_webpush_notification(notification, json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
