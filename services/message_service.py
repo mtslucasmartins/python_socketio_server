@@ -2,6 +2,8 @@ from database import db
 from database.models import ChatContacts, Message, MessageContact, Contact, UserEndpoint
 from sockets import sockets
 
+import json
+
 from notifications import WebPushNotification, WebPushNotificationAction, WebPushNotificationData, send_webpush_notification
 
 def create_message(message):
@@ -41,7 +43,7 @@ def create_message(message):
                         notification = WebPushNotification("title", "body", "icon", data)
 
                         print('Sending Notification.')
-                        send_webpush_notification(notification, user_endpoint.endpoint)
+                        send_webpush_notification(notification, json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
