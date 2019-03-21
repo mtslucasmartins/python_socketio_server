@@ -43,7 +43,7 @@ def create_message(message):
                         notification = WebPushNotification("title", "body", "icon", data)
 
                         print('Sending Notification.')
-                        send_webpush_notification(notification, json.loads(user_endpoint.endpoint))
+                        send_webpush_notification(notification.json(), json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
