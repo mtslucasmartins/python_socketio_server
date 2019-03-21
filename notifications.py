@@ -76,14 +76,15 @@ def send_webpush_notification(notification, endpoint):
                 "data": {
                     "dateOfArrival": notification.data.date_of_arrival.astimezone(timezone).isoformat(),
                     "primaryKey": notification.data.primary_key
-                },
-                "actions": notification.actions
+                }
             }
         })
 
         print('Sending...')
 
-        webpush(endpoint, body,
+        webpush(
+            subscription_info=endpoint,
+            data=body,
             vapid_private_key=private_key,  # "mp5xYHWtRTyCA63nZMvmJ_qmYO6A1klSotcoppSx-MI",
             vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
         )
