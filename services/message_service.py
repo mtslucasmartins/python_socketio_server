@@ -1,11 +1,12 @@
 from database import db
 import database.models as models
-
+import notifications as notifications
 from sockets import sockets
 
 import json
 
-import notifications
+
+
 
 def create_message(message):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""

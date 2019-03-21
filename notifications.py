@@ -5,6 +5,11 @@ from pytz import timezone
 
 import json
 
+# WARNING
+import sys
+sys.setrecursionlimit(1500)
+
+
 public_key = "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u3Q36JdjLLk69WYNWJ2rOw"
 private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
 
@@ -97,4 +102,3 @@ def send_webpush_notification(notification, endpoint):
                 )
     except Exception as e:
         print(e)
-        print('Other stuff', e)
