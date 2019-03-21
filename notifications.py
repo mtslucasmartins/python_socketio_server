@@ -22,19 +22,13 @@ class WebPushNotificationData:
         self.date_of_arrival = date_of_arrival
         self.primary_key = primary_key
 
-    def json(self):
-        return {
-            "dateOfArrival": self.date_of_arrival.astimezone(timezone).isoformat(),
-            "primaryKey": self.primary_key
-        }
-
 class WebPushNotificationAction:
     """"""
     def __init__(self, action = "", title = ""):
         self.action = action
         self.title = title
 
-    def json(self):
+    def as_json(self):
         return {
             "action": self.action,
             "title": self.title
@@ -52,17 +46,7 @@ class WebPushNotification:
         self.actions = []
 
     def append_action(self, action):
-        self.actions.append(action.json())
-
-    def json(self):
-        return {
-            "title": self.title,
-            "body": self.body,
-            "icon": self.icon,
-            "vibrate": self.vibrate,
-            "data": self.data.json(),
-            "actions": self.actions
-        }
+        self.actions.append(action.as_json())
 
 
 def send_webpush_notification(notification, endpoint):
