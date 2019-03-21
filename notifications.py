@@ -1,6 +1,6 @@
 from pywebpush import webpush, WebPushException
 from datetime import datetime
-
+import json
 
 public_key = "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u3Q36JdjLLk69WYNWJ2rOw"
 private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
@@ -57,6 +57,9 @@ class WebPushNotification:
 
 def send_webpush_notification(notification, endpoint):
     try:
+        print(json.dumps(notification))
+        print(json.dumps(endpoint))
+
         webpush(
             subscription_info=endpoint,
             data={'notification': notification},
@@ -74,4 +77,5 @@ def send_webpush_notification(notification, endpoint):
                 extra.message
                 )
     except Exception as e:
-        print('Other stuff')
+        print(e)
+        print('Other stuff', e)
