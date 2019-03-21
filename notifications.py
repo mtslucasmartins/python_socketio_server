@@ -69,7 +69,7 @@ def send_webpush_notification(notification, endpoint):
                 "body": notification.body,
                 "vibrate": notification.vibrate,
                 "data": {
-                    "dateOfArrival": notification.data.date_of_arrival,
+                    "dateOfArrival": notification.data.date_of_arrival.astimezone(timezone).isoformat(),
                     "primaryKey": notification.data.primary_key
                 },
                 "actions": notification.actions
