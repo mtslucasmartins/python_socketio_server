@@ -1,9 +1,9 @@
 from pywebpush import webpush, WebPushException
 
 from datetime import datetime
-from pytz import timezone
 
 import json
+import pytz
 
 # WARNING
 import sys
@@ -13,7 +13,7 @@ public_key = "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u
 private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
 
 
-timezone = timezone('America/Sao_Paulo')
+timezone = pytz.timezone('America/Sao_Paulo')
 
 class WebPushNotificationData:
     """"""
