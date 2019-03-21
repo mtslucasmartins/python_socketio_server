@@ -41,7 +41,7 @@ def create_message(message):
                     print('Iteating over user endpoints...')
                     for user_endpoint in user_endpoints:                        
                         print('Sending Notification.')
-                        notifications.send_webpush_notification(message.chat.subject, "Novas Mensagens", json.loads(user_endpoint.endpoint))
+                        notifications.WebPushNotification.send_webpush_notification(message.chat.subject, "Novas Mensagens", json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
