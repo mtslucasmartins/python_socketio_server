@@ -42,7 +42,7 @@ def create_message(message):
                         data = WebPushNotificationData()
                         action = WebPushNotificationAction("teste", "Go to the site")
 
-                        notification = WebPushNotification("Angular News", "Newsletter Available!", "assets/icon-512x512.png", data)
+                        notification = WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", data)
                         notification.append_action(action)
                         
                         print('Sending Notification.')
