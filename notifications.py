@@ -67,7 +67,7 @@ def send_webpush_notification(notification, endpoint):
 
         webpush(
             subscription_info=endpoint,
-            data={'notification': notification},
+            data={"notification": notification},
             vapid_private_key=private_key,  # "mp5xYHWtRTyCA63nZMvmJ_qmYO6A1klSotcoppSx-MI",
             vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
         )
