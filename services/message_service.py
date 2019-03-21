@@ -1,10 +1,11 @@
 from database import db
-from database.models import ChatContacts, Message, MessageContact, Contact, UserEndpoint
+import database.models
+
 from sockets import sockets
 
 import json
 
-from notifications import WebPushNotification, WebPushNotificationAction, WebPushNotificationData, send_webpush_notification
+import notifications
 
 def create_message(message):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
@@ -38,14 +39,14 @@ def create_message(message):
                     user_endpoints = UserEndpoint.query.filter(UserEndpoint.fk_users_id == user_id)
                     print('Iteating over user endpoints...')
                     for user_endpoint in user_endpoints:
-                        data = WebPushNotificationData()
-                        action = WebPushNotificationAction("teste", "Go to the site")
+                        data = notifications.WebPushNotificationData()
+                        action = notifications.WebPushNotificationAction("teste", "Go to the site")
 
-                        notification = WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", data)
+                        notification = notifications.WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", data)
                         notification.append_action(action)
                         
                         print('Sending Notification.')
-                        send_webpush_notification(notification, json.loads(user_endpoint.endpoint))
+                        notifications.send_webpush_notification(notification, json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
