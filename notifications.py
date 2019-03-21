@@ -15,6 +15,7 @@ private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
 
 timezone = timezone('America/Sao_Paulo')
 
+@staticmethod
 def send_webpush_notification(title, body, endpoint):
     try:
         print('Building...')
