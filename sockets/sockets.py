@@ -79,7 +79,7 @@ def on_message_created(data):
 @socket_io.on('message::received', namespace=NAMESPACE)
 def on_message_received(data):
     """Sets a Message as received by a User."""
-    message_id = data.get('serverId')
+    message_id = int(data.get('serverId'))
     contact_id = data.get('contact').get('id')
 
     message_service.update_message_set_received(message_id, contact_id)
@@ -88,7 +88,7 @@ def on_message_received(data):
 @socket_io.on('message::seen', namespace=NAMESPACE)
 def on_message_received(data):
     """Sets a Message as received by a User."""
-    message_id = data.get('serverId')
+    message_id = int(data.get('serverId'))
     contact_id = data.get('contact').get('id')
 
     message_service.update_message_set_seen(message_id, contact_id)
