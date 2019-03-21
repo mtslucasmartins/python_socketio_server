@@ -62,6 +62,7 @@ class WebPushNotification:
 
 def send_webpush_notification(notification, endpoint):
     try:
+        print('Building...')
         body = json.dumps({
             "notification": {
                 "title": notification.title,
@@ -75,6 +76,8 @@ def send_webpush_notification(notification, endpoint):
                 "actions": notification.actions
             }
         })
+
+        print('Sending...')
 
         webpush(
             subscription_info=endpoint,
