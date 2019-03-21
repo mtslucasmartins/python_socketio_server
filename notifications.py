@@ -63,5 +63,13 @@ def send_webpush_notification(notification, endpoint):
             vapid_private_key=private_key,  # "mp5xYHWtRTyCA63nZMvmJ_qmYO6A1klSotcoppSx-MI",
             vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
         )
-    except:  # WebPushException as ex:
-        print('')
+    except WebPushException as ex:
+        print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
+        # Mozilla returns additional information in the body of the response.
+        if ex.response and ex.response.json():
+            extra = ex.response.json()
+            print("Remote service replied with a {}:{}, {}",
+                extra.code,
+                extra.errno,
+                extra.message
+                )

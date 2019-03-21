@@ -21,7 +21,29 @@ class User(db.Model):
             "email": self.email,
             "password": self.password,
         }
+        
 
+class UserEndpoint(db.Model):
+    __tablename__ = 'users_push_endpoints'
+
+    fk_users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, primary_key=True)
+    user = db.relationship('User', foreign_keys='UserEndpoint.fk_users_id')
+
+    endpoint = db.Column(db.String(), nullable=False, primary_key=True)
+
+    def __init__(self, fk_users_id=None, endpoint=None):
+        self.fk_users_id = fk_users_id
+        self.endpoint = endpoint
+
+    def __repr__(self):
+        return str(json.dumps(self.as_json()))
+
+    def as_json(self):
+        return {
+            "user": self.user.as_json(),
+            "endpoint": self.content
+        }
+        
 
 class Session(db.Model):
     __tablename__ = 'authorized_tokens'
