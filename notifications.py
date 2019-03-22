@@ -8,6 +8,7 @@ from datetime import datetime
 import json
 import pytz
 
+
 vapid = {
     "claims": {
         "sub": "mailto:lucas@ottimizza.com.br"
@@ -19,7 +20,7 @@ vapid = {
 timezone = pytz.timezone('America/Sao_Paulo')
 
 class WebPushNotificationData:
-    """"""
+    """Model for Push API Notification Data."""
     def __init__(self, date_of_arrival = datetime.now(), primary_key = 1):
         self.date_of_arrival = date_of_arrival
         self.primary_key = primary_key
@@ -31,7 +32,7 @@ class WebPushNotificationData:
         }
 
 class WebPushNotificationAction:
-    """"""
+    """Model for Push API Notification Actions."""
     def __init__(self, action = "", title = ""):
         self.action = action
         self.title = title
@@ -68,7 +69,7 @@ class WebPushNotification:
             print("  vapid_claims      ...:  {}".format(json.dumps(vapid.get("claims"))))
             print("")
 
-            wp.webpush(subscription_info=subscription_info, data=data, vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)
+            wp.webpush(subscription_info=subscription_info, data="Teste", vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)
         except wp.WebPushException as ex:
             print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
             # Mozilla returns additional information in the body of the response.
@@ -96,39 +97,39 @@ class WebPushNotification:
         return json.dumps({'notification': self.json()})
 
 
-def send_webpush_notification(notification, endpoint):
-    try:
-        print('Building...')
-        body = json.dumps({
-            "notification": {
-                "title": notification.title,
-                "icon": notification.icon,
-                "body": notification.body,
-                "vibrate": notification.vibrate,
-                "data": {
-                    "dateOfArrival": notification.data.date_of_arrival.isoformat(), # .astimezone(timezone).isoformat(),
-                    "primaryKey": notification.data.primary_key
-                }
-            }
-        })
+# def send_webpush_notification(notification, endpoint):
+#     try:
+#         print('Building...')
+#         body = json.dumps({
+#             "notification": {
+#                 "title": notification.title,
+#                 "icon": notification.icon,
+#                 "body": notification.body,
+#                 "vibrate": notification.vibrate,
+#                 "data": {
+#                     "dateOfArrival": notification.data.date_of_arrival.isoformat(), # .astimezone(timezone).isoformat(),
+#                     "primaryKey": notification.data.primary_key
+#                 }
+#             }
+#         })
 
-        print('Sending...')
+#         print('Sending...')
 
-        wp.webpush(
-            subscription_info=endpoint,
-            data=body,
-            vapid_private_key=private_key, 
-            vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
-        )
-    except wp.WebPushException as ex:
-        print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
-        # Mozilla returns additional information in the body of the response.
-        if ex.response and ex.response.json():
-            extra = ex.response.json()
-            print("Remote service replied with a {}:{}, {}",
-                extra.code,
-                extra.errno,
-                extra.message
-                )
-    except Exception as e:
-        print(e)
+#         wp.webpush(
+#             subscription_info=endpoint,
+#             data=body,
+#             vapid_private_key=private_key, 
+#             vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
+#         )
+#     except wp.WebPushException as ex:
+#         print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
+#         # Mozilla returns additional information in the body of the response.
+#         if ex.response and ex.response.json():
+#             extra = ex.response.json()
+#             print("Remote service replied with a {}:{}, {}",
+#                 extra.code,
+#                 extra.errno,
+#                 extra.message
+#                 )
+#     except Exception as e:
+#         print(e)
