@@ -79,17 +79,24 @@ def create_message(message, user_id):
             # Web Push Notifications
             if user_id != contact_user_id:
 
-                q = (db.session.query(models.MessageContact) \
-                                        .join(models.Message, models.Message.server_id == models.MessageContact.fk_messages_id) \
-                                        .filter(and_(models.Message.fk_chats_id == message.chat.id,
-                                                    models.Message.fk_contacts_id != contact_id,
-                                                    or_(models.MessageContact.is_received is False,
-                                                        models.MessageContact.is_seen is False))) \
-                                        )
-                                        # .filter()
 
                 try:
-                    print('count {}'.format(get_count(q)))
+                    count = db.session.execute("""
+                        select count(message.server_id) from messages message
+                          inner join messages_contacts messageContact
+                            on (
+                                message.server_id = messageContact.fk_messages_id
+                                and
+                                messageContact.fk_contacts_id = :contactId
+                            )
+                        where message.fk_chats_id = :chatId
+                        and message.fk_contacts_id != :contactId
+                        and (
+                            messageContact.is_received = false
+                            or
+                            messageContact.is_seen = false
+                        ) """).scalar()
+                    print('count {}'.format(count))
                 except Exception as e:
                     print(e)
 
