@@ -44,7 +44,7 @@ def create_message(message, user_id):
             # Web Push Notifications
             if user_id != contact_user_id:
 
-                pending_messages = (db.session.query(models.Message, func.count(models.Message.server_id)) \
+                q = (db.session.query(models.Message) \
                                      .join(models.MessageContact,
                                            and_(models.Message.server_id == models.MessageContact.fk_messages_id,
                                                 models.MessageContact.fk_contacts_id == contact_id)) \
@@ -52,9 +52,8 @@ def create_message(message, user_id):
                                              models.Message.fk_contacts_id != contact_id)) \
                                      .filter(or_(models.MessageContact.is_received is False,
                                                  models.MessageContact.is_seen is False))
-                                     .group_by(models.Message.server_id).scalar())
 
-                print(pending_messages)
+                print(get_count(q))
 
                 user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
                 for user_endpoint in user_endpoints:
@@ -185,5 +184,7 @@ def set_seen_before_id(message_id, contact_id) -> None:
             .update({'status': message.status})
         db.session.commit()
 
-
-
+def get_count(q):
+    count_q = q.statement.with_only_columns([func.count()]).order_by(None)
+    count = q.session.execute(count_q).scalar()
+    return count
