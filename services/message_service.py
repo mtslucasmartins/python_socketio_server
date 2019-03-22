@@ -62,10 +62,10 @@ def update_message_set_received(message_id, contact_id) -> None:
         .update({'is_received': True})
     db.session.commit()
 
-    try:
-        # set_received_before_id(message_id, contact_id)
-    except Exception as e:
-        print(e)
+    # try:
+    #     set_received_before_id(message_id, contact_id)
+    # except Exception as e:
+    #     print(e)
 
     # if the message is not yet received by any user,
     # updates the reference and emits a message to the sender.
@@ -99,10 +99,10 @@ def update_message_set_seen(message_id, contact_id) -> None:
         .update({'is_received': True, 'is_seen': True})
     db.session.commit()
 
-    try:
-        # set_seen_before_id(message_id, contact_id)
-    except Exception as e:
-        print(e)
+    # try:
+    #     set_seen_before_id(message_id, contact_id)
+    # except Exception as e:
+    #     print(e)
 
     # if the message is not yet viewed,
     # updates the reference and emits a message to the sender.
