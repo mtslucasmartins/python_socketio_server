@@ -38,11 +38,11 @@ def create_message(message):
                     # Web Push Notifications
                     user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == user_id)
                     for user_endpoint in user_endpoints:
-                        data = notifications.WebPushNotificationData()
-                        action = notifications.WebPushNotificationAction("teste", "Go to the site")
+                        notification_data = notifications.WebPushNotificationData()
+                        notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
 
-                        notification = notifications.WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", data)
-                        notification.append_action(action)
+                        notification = notifications.WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", notification_data)
+                        notification.append_action(notification_action)
                         
                         notification.push(json.loads(user_endpoint.endpoint))
 

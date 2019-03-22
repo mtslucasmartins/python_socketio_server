@@ -5,7 +5,7 @@ import uuid
 from settings import DATABASE_URI, PORT
 from database import db as database
 from database.models import User, Session
-from sockets.sockets import *
+from sockets.sockets import socket_io, sockets
 from flask import abort, Flask, g as request_context, request, Response
 from flask_cors import CORS, cross_origin
 
@@ -83,23 +83,6 @@ def generate_websocket_ticket():
     return response
 
 
-@app.route("/services/messages/<message_id>/received/<contact_id>")
-@cross_origin()
-def update_message_set_received(message_id, contact_id):
-    message_service.update_message_set_received(message_id, contact_id, request_context.user)
-    return json.dumps({'status': 'success'})
-
-
-@app.route("/services/messages/<message_id>/seen/<contact_id>")
-@cross_origin()
-def update_message_set_seen(message_id, contact_id):
-    message_service.update_message_set_seen(message_id, contact_id, request_context.user)
-    return json.dumps({'status': 'success'})
-
-
 if __name__ == "__main__":
-    import gevent.monkey
-    gevent.monkey.patch_all()
-    
     # run socket app
     socket_io.run(app, host='0.0.0.0', port=PORT, debug=True)
