@@ -5,7 +5,7 @@ import uuid
 from settings import DATABASE_URI, PORT
 from database import db as database
 from database.models import User, Session
-from sockets.sockets import socket_io, sockets
+from sockets.sockets import *
 from flask import abort, Flask, g as request_context, request, Response
 from flask_cors import CORS, cross_origin
 
@@ -81,7 +81,6 @@ def generate_websocket_ticket():
     response = json.dumps({'status': 'success', 'userId': user_id, 'ticket': user_ticket})
 
     return response
-
 
 if __name__ == "__main__":
     # run socket app
