@@ -55,7 +55,7 @@ def create_message(message, user_id):
                                                     models.MessageContact.is_seen is False))
                                         .filter(and_(models.Message.fk_chats_id == message.chat.id,
                                                     models.Message.fk_contacts_id != contact_id)) \
-                                        ).all()
+                                        )
 
                 print(get_count(q))
 
