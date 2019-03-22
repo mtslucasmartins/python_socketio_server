@@ -98,4 +98,8 @@ def update_message_set_seen(message_id, contact_id):
 
 
 if __name__ == "__main__":
+    import gevent.monkey
+    gevent.monkey.patch_all()
+    
+    # run socket app
     socket_io.run(app, host='0.0.0.0', port=PORT, debug=True)
