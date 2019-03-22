@@ -63,7 +63,7 @@ def update_message_set_received(message_id, contact_id) -> None:
     db.session.commit()
 
     try:
-        set_received_before_id(message_id, contact_id)
+        # set_received_before_id(message_id, contact_id)
     except Exception as e:
         print(e)
 
@@ -100,7 +100,7 @@ def update_message_set_seen(message_id, contact_id) -> None:
     db.session.commit()
 
     try:
-        set_seen_before_id(message_id, contact_id)
+        # set_seen_before_id(message_id, contact_id)
     except Exception as e:
         print(e)
 
