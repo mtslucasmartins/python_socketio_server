@@ -95,7 +95,7 @@ def create_message(message, user_id):
                             messageContact.is_received = false
                             or
                             messageContact.is_seen = false
-                        ) """, chatId=message.fk_chats_id, contactId=contact_id).scalar()
+                        ) """, {'chatId': message.fk_chats_id, 'contactId': contact_id}).scalar()
                     print('count {}'.format(count))
                 except Exception as e:
                     print(e)
