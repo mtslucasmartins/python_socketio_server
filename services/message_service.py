@@ -8,6 +8,11 @@ from sockets import sockets
 
 import json
 
+def get_count(q):
+    count_q = q.statement.with_only_columns([func.count()]).order_by(None)
+    count = q.session.execute(count_q).scalar()
+    return count
+
 
 def create_message(message, user_id):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
@@ -51,7 +56,7 @@ def create_message(message, user_id):
                                      .filter(and_(models.Message.fk_chats_id == message.chat.id,
                                              models.Message.fk_contacts_id != contact_id)) \
                                      .filter(or_(models.MessageContact.is_received is False,
-                                                 models.MessageContact.is_seen is False))
+                                                 models.MessageContact.is_seen is False)))
 
                 print(get_count(q))
 
@@ -184,7 +189,3 @@ def set_seen_before_id(message_id, contact_id) -> None:
             .update({'status': message.status})
         db.session.commit()
 
-def get_count(q):
-    count_q = q.statement.with_only_columns([func.count()]).order_by(None)
-    count = q.session.execute(count_q).scalar()
-    return count
