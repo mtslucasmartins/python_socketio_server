@@ -73,7 +73,7 @@ def on_message_created(data):
                       updated_at=datetime.now(),
                       created_at=message_created_at)
 
-    message_service.create_message(message)
+    message_service.create_message(message, user_id)
 
 
 @socket_io.on('message::received', namespace=NAMESPACE)
