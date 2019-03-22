@@ -1,3 +1,5 @@
+from sqlalchemy import or_
+
 import database.models as models
 import notifications as notifications
 
@@ -23,6 +25,7 @@ def create_message(message, user_id):
 
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
+        contact_id = chat_contact.contact.id
         if chat_contact.contact.fk_users_id is not None:
             contact_user_id = str(round(chat_contact.contact.fk_users_id))
             message_contact = models.MessageContact(message.server_id, chat_contact.contact.id)
@@ -40,6 +43,18 @@ def create_message(message, user_id):
 
             # Web Push Notifications
             if user_id != contact_user_id:
+
+                pending_messages = db.session.query(models.Message) \
+                                     .join(models.MessageContact,
+                                           models.Message.id == models.MessageContact.fk_messages_id,
+                                           models.MessageContact.fk_contacts_id == contact_id) \
+                                     .filter(models.Message.fk_chats_id == message.chat.id,
+                                             models.Message.fk_contacts_id != contact_id)\
+                                     .filter(or_(models.MessageContact.is_received == False,
+                                                 models.MessageContact.is_seen == False)).count()
+
+                print(pending_messages)
+
                 user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
                 for user_endpoint in user_endpoints:
                     notification_data = notifications.WebPushNotificationData()
