@@ -6,13 +6,17 @@ import pywebpush as wp
 from datetime import datetime
 
 import json
-# import pytz
+import pytz
 
-public_key = "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u3Q36JdjLLk69WYNWJ2rOw"
-private_key = "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
+vapid = {
+    "claims": {
+        "sub": "mailto:lucas@ottimizza.com.br"
+    },
+    "public_key": "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u3Q36JdjLLk69WYNWJ2rOw",
+    "private_key": "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
+}
 
-
-# timezone = pytz.timezone('America/Sao_Paulo')
+timezone = pytz.timezone('America/Sao_Paulo')
 
 class WebPushNotificationData:
     """"""
@@ -22,7 +26,7 @@ class WebPushNotificationData:
 
     def json(self):
         return {
-            "dateOfArrival": self.date_of_arrival.isoformat(), # .astimezone(timezone).isoformat(),
+            "dateOfArrival": self.date_of_arrival.astimezone(timezone).isoformat(),
             "primaryKey": self.primary_key
         }
 
@@ -52,6 +56,32 @@ class WebPushNotification:
     def append_action(self, action):
         self.actions.append(action.json())
 
+    def push(self, subscription_info):
+        try:
+            data = str(self)
+            vapid_private_key = vapid.get("private_key")
+            vapid_claims = vapid.get("claims")
+
+            print("Pushing Notification...\n")
+            print("  data              ...:  {}".format(data))
+            print("  vapid_private_key ...:  {}".format(vapid_private_key))
+            print("  vapid_claims      ...:  {}".format(json.dumps(vapid.get("claims"))))
+            print("")
+
+            wp.webpush(subscription_info=subscription_info, data=data, vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)
+        except wp.WebPushException as ex:
+            print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
+            # Mozilla returns additional information in the body of the response.
+            if ex.response and ex.response.json():
+                extra = ex.response.json()
+                print("Remote service replied with a {}:{}, {}",
+                    extra.code,
+                    extra.errno,
+                    extra.message
+            )
+        except Exception as e:
+            print(e)
+
     def json(self):
         return {
             "title": self.title,
@@ -61,6 +91,9 @@ class WebPushNotification:
             "data": self.data.json(),
             "actions": self.actions
         }
+    
+    def __repr__(self):
+        return json.dumps({'notification': self.json()})
 
 
 def send_webpush_notification(notification, endpoint):
