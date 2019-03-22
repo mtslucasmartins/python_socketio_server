@@ -8,41 +8,25 @@ from sockets import sockets
 
 import json
 
-# def get_count(q):
-#     count_q = q.statement.with_only_columns([func.count()]).order_by(None)
-#     count = q.session.execute(count_q).scalar()
-#     return count
 
-from sqlalchemy import func, distinct
-from sqlalchemy.orm import lazyload
+def count_pending_messages(chat_id, contact_id):
+    count = db.session.execute("""
+        select count(message.server_id) from messages message
+            inner join messages_contacts messageContact
+            on (
+                message.server_id = messageContact.fk_messages_id
+                and
+                messageContact.fk_contacts_id = :contactId
+            )
+        where message.fk_chats_id = :chatId
+        and message.fk_contacts_id != :contactId
+        and (
+            messageContact.is_received = false
+            or
+            messageContact.is_seen = false
+        ) """, {'chatId': chat_id, 'contactId': contact_id}).scalar()
 
-def get_count(q):
-	disable_group_by = False
-	if len(q._entities) > 1:
-		# currently support only one entity
-		raise Exception('only one entity is supported for get_count, got: %s' % q)
-	entity = q._entities[0]
-	if hasattr(entity, 'column'):
-		# _ColumnEntity has column attr - on case: query(Model.column)...
-		col = entity.column
-		if q._group_by and q._distinct:
-			# which query can have both?
-			raise NotImplementedError
-		if q._group_by or q._distinct:
-			col = distinct(col)
-		if q._group_by:
-			# need to disable group_by and enable distinct - we can do this because we have only 1 entity
-			disable_group_by = True
-		count_func = func.count(col)
-	else:
-		# _MapperEntity doesn't have column attr - on case: query(Model)...
-		count_func = func.count()
-	if q._group_by and not disable_group_by:
-		count_func = count_func.over(None)
-	count_q = q.options(lazyload('*')).statement.with_only_columns([count_func]).order_by(None)
-	if disable_group_by:
-		count_q = count_q.group_by(None)
-	return q.session.execute(count_q).scalar()
+    return count
 
 def create_message(message, user_id):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
@@ -79,41 +63,30 @@ def create_message(message, user_id):
             # Web Push Notifications
             if user_id != contact_user_id:
 
-
                 try:
-                    count = db.session.execute("""
-                        select count(message.server_id) from messages message
-                          inner join messages_contacts messageContact
-                            on (
-                                message.server_id = messageContact.fk_messages_id
-                                and
-                                messageContact.fk_contacts_id = :contactId
-                            )
-                        where message.fk_chats_id = :chatId
-                        and message.fk_contacts_id != :contactId
-                        and (
-                            messageContact.is_received = false
-                            or
-                            messageContact.is_seen = false
-                        ) """, {'chatId': message.fk_chats_id, 'contactId': contact_id}).scalar()
-                    print('count {}'.format(count))
+                    count = count_pending_messages(message.fk_chats_id, contact_id)
+
+                    user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
+                    for user_endpoint in user_endpoints:
+                        notification_data = notifications.WebPushNotificationData()
+                        notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
+
+                        notification_title = message.chat.subject
+                        notification_body = "Novas Mensagens"
+                        notification_icon = "assets/icons/icon-512x512.png"
+                        notification_tag = str(message.chat.id)
+
+                        if count > 1:
+                            notification_body = "Você possui {} novas mensagens!".format(count)
+                        else:
+                            notification_body = "Você possui uma nova mensagem!"
+
+                        notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_tag, notification_data)
+                        notification.append_action(notification_action)
+                        
+                        notification.push(json.loads(user_endpoint.endpoint))
                 except Exception as e:
                     print(e)
-
-                user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
-                for user_endpoint in user_endpoints:
-                    notification_data = notifications.WebPushNotificationData()
-                    notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
-
-                    notification_title = message.chat.subject
-                    notification_body = "Novas Mensagens"
-                    notification_icon = "assets/icons/icon-512x512.png"
-                    notification_tag = str(message.chat.id)
-
-                    notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_tag, notification_data)
-                    notification.append_action(notification_action)
-                    
-                    notification.push(json.loads(user_endpoint.endpoint))
 
 
 def update_message_set_received(message_id, contact_id) -> None:
