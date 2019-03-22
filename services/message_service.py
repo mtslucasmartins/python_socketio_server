@@ -44,7 +44,7 @@ def create_message(message, user_id):
             # Web Push Notifications
             if user_id != contact_user_id:
 
-                pending_messages = models.Message.query \
+                pending_messages = db.session.query(models.Message) \
                                      .join(models.MessageContact,
                                            and_(models.Message.server_id == models.MessageContact.fk_messages_id,
                                                 models.MessageContact.fk_contacts_id == contact_id)) \
