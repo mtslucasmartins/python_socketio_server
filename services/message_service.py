@@ -87,9 +87,10 @@ def create_message(message, user_id):
                                         )
                                         # .filter()
 
-                print(get_count(q))
-                print(get_count(q).first())
-                print(get_count(q).count())
+                try:
+                    print(get_count(q))
+                except Exception as e:
+                    print(e)
 
                 user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
                 for user_endpoint in user_endpoints:
