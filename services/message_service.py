@@ -52,7 +52,7 @@ def create_message(message, user_id):
                                              models.Message.fk_contacts_id != contact_id)) \
                                      .filter(or_(models.MessageContact.is_received is False,
                                                  models.MessageContact.is_seen is False))
-                                     .group_by(models.Message.server_id).first())
+                                     .group_by(models.Message.server_id).scalar())
 
                 print(pending_messages)
 
