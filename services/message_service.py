@@ -48,8 +48,9 @@ def create_message(message, user_id):
                     notification_title = message.chat.subject
                     notification_body = "Novas Mensagens"
                     notification_icon = "assets/icons/icon-512x512.png"
+                    notification_tag = message.chat.id
 
-                    notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_data)
+                    notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_tag, notification_data)
                     notification.append_action(notification_action)
                     
                     notification.push(json.loads(user_endpoint.endpoint))

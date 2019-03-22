@@ -45,10 +45,11 @@ class WebPushNotificationAction:
 
 class WebPushNotification:
     """"""
-    def __init__(self, title, body, icon, data, vibrate = [100, 50, 100]):
+    def __init__(self, title, body, icon, tag, data, vibrate = [100, 50, 100]):
         self.title = title
         self.body = body
         self.icon = icon
+        self.tag = tag
         self.vibrate = vibrate
 
         self.data = data
@@ -88,6 +89,7 @@ class WebPushNotification:
             "title": self.title,
             "body": self.body,
             "icon": self.icon,
+            "tag": self.tag,
             "vibrate": self.vibrate,
             "data": self.data.json(),
             "actions": self.actions
