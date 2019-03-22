@@ -1,3 +1,7 @@
+from gevent import monkey
+
+monkey.patch_all()
+
 import base64
 import json
 import time
