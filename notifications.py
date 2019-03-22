@@ -69,7 +69,7 @@ class WebPushNotification:
             print("  vapid_claims      ...:  {}".format(json.dumps(vapid.get("claims"))))
             print("")
 
-            wp.webpush(subscription_info=subscription_info, data="Teste", vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)
+            wp.webpush(subscription_info=subscription_info, data=data, vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)
         except wp.WebPushException as ex:
             print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
             # Mozilla returns additional information in the body of the response.
