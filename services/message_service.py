@@ -34,26 +34,25 @@ def create_message(message, user_id):
             if contact_user_id in sockets.sockets:
                 try:
                     sockets.sockets[contact_user_id].emit('message::created', message.as_json())
-
-                    # Web Push Notifications
-                    if user_id != contact_user_id:
-                        user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
-                        for user_endpoint in user_endpoints:
-                            notification_data = notifications.WebPushNotificationData()
-                            notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
-
-                            notification_title = message.chat.subject
-                            notification_body = "Novas Mensagens"
-                            notification_icon = "assets/icons/icon-512x512.png"
-
-                            notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_data)
-                            notification.append_action(notification_action)
-                            
-                            notification.push(json.loads(user_endpoint.endpoint))
-
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
                     print(ex)
+
+            # Web Push Notifications
+            if user_id != contact_user_id:
+                user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
+                for user_endpoint in user_endpoints:
+                    notification_data = notifications.WebPushNotificationData()
+                    notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
+
+                    notification_title = message.chat.subject
+                    notification_body = "Novas Mensagens"
+                    notification_icon = "assets/icons/icon-512x512.png"
+
+                    notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_data)
+                    notification.append_action(notification_action)
+                    
+                    notification.push(json.loads(user_endpoint.endpoint))
 
 
 def update_message_set_received(message_id, contact_id) -> None:
