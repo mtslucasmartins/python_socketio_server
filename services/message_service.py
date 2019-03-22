@@ -49,7 +49,7 @@ def create_message(message, user_id):
             # Web Push Notifications
             if user_id != contact_user_id:
 
-                q = (db.session.query(models.MessageContact) \
+                q = (models.MessageContact.query \
                                     .filter(or_(models.MessageContact.is_received is False,
                                                 models.MessageContact.is_seen is False))
                                     .join(models.Message, models.Message.server_id == models.MessageContact.fk_messages_id) \
