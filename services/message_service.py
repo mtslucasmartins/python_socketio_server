@@ -1,4 +1,4 @@
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 import database.models as models
 import notifications as notifications
@@ -46,12 +46,12 @@ def create_message(message, user_id):
 
                 pending_messages = models.Message.query \
                                      .join(models.MessageContact,
-                                           models.Message.server_id == models.MessageContact.fk_messages_id,
-                                           models.MessageContact.fk_contacts_id == contact_id) \
+                                           and_(models.Message.server_id == models.MessageContact.fk_messages_id,
+                                                models.MessageContact.fk_contacts_id == contact_id)) \
                                      .filter(models.Message.fk_chats_id == message.chat.id,
                                              models.Message.fk_contacts_id != contact_id)\
-                                     .filter(or_(models.MessageContact.is_received == False,
-                                                 models.MessageContact.is_seen == False)).count()
+                                     .filter(or_(models.MessageContact.is_received is False,
+                                                 models.MessageContact.is_seen is False)).count()
 
                 print(pending_messages)
 
