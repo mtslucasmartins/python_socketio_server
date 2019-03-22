@@ -67,7 +67,7 @@ class WebPushNotification:
 def send_webpush_notification(notification, endpoint):
     try:
         print('Building...')
-        body = json.dumps({
+        body = {
             "notification": {
                 "title": notification.title,
                 "icon": notification.icon,
@@ -78,7 +78,7 @@ def send_webpush_notification(notification, endpoint):
                     "primaryKey": notification.data.primary_key
                 }
             }
-        })
+        }
 
         print('Sending...')
 
