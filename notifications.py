@@ -1,4 +1,7 @@
-from pywebpush import webpush, WebPushException
+# from pywebpush import webpush, WebPushException
+
+import pywebpush as wp
+
 
 from datetime import datetime
 
@@ -78,13 +81,13 @@ def send_webpush_notification(notification, endpoint):
 
         print('Sending...')
 
-        webpush(
+        wp.webpush(
             subscription_info=endpoint,
             data=body,
-            vapid_private_key=private_key,  # "mp5xYHWtRTyCA63nZMvmJ_qmYO6A1klSotcoppSx-MI",
+            vapid_private_key=private_key, 
             vapid_claims={"sub": "mailto:lucas@ottimizza.com.br"}
         )
-    except WebPushException as ex:
+    except wp.WebPushException as ex:
         print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
         # Mozilla returns additional information in the body of the response.
         if ex.response and ex.response.json():
