@@ -7,7 +7,7 @@ from sockets import sockets
 import json
 
 
-def create_message(message):
+def create_message(message, user_id):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
 
     # Inserts the message to the database, and flushes it in order to get the generated id.
@@ -24,27 +24,32 @@ def create_message(message):
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
         if chat_contact.contact.fk_users_id is not None:
-            user_id = str(round(chat_contact.contact.fk_users_id))
+            contact_user_id = str(round(chat_contact.contact.fk_users_id))
             message_contact = models.MessageContact(message.server_id, chat_contact.contact.id)
 
             db.session.add(message_contact)
             db.session.commit()
 
             # sends the message to the user, if connected.
-            if user_id in sockets.sockets:
+            if contact_user_id in sockets.sockets:
                 try:
-                    sockets.sockets[user_id].emit('message::created', message.as_json())
+                    sockets.sockets[contact_user_id].emit('message::created', message.as_json())
 
                     # Web Push Notifications
-                    user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == user_id)
-                    for user_endpoint in user_endpoints:
-                        notification_data = notifications.WebPushNotificationData()
-                        notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
+                    if user_id != contact_user_id:
+                        user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
+                        for user_endpoint in user_endpoints:
+                            notification_data = notifications.WebPushNotificationData()
+                            notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
 
-                        notification = notifications.WebPushNotification(message.chat.subject, "Novas Mensagens", "assets/icons/icon-512x512.png", notification_data)
-                        notification.append_action(notification_action)
-                        
-                        notification.push(json.loads(user_endpoint.endpoint))
+                            notification_title = message.chat.subject
+                            notification_body = "Novas Mensagens"
+                            notification_icon = "assets/icons/icon-512x512.png"
+
+                            notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_data)
+                            notification.append_action(notification_action)
+                            
+                            notification.push(json.loads(user_endpoint.endpoint))
 
                 except Exception as ex:
                     print("""Exception at message_service.py 'create_message'""")
