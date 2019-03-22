@@ -51,11 +51,12 @@ def create_message(message, user_id):
 
                 q = (db.session.query(models.MessageContact) \
                                         .join(models.Message, models.Message.server_id == models.MessageContact.fk_messages_id) \
-                                        .filter(or_(models.MessageContact.is_received is False,
-                                                    models.MessageContact.is_seen is False))
                                         .filter(and_(models.Message.fk_chats_id == message.chat.id,
-                                                    models.Message.fk_contacts_id != contact_id)) \
+                                                    models.Message.fk_contacts_id != contact_id,or_(models.MessageContact.is_received is False,
+                                                    models.MessageContact.is_seen is False))) \
                                         )
+                                        # .filter()
+                                        
 
                 print(get_count(q))
 
