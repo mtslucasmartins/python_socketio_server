@@ -71,7 +71,7 @@ def create_message(message, user_id):
                     count = count_pending_messages(message.fk_chats_id, contact_id)
 
                     print('Getting User Endpoints for Push...')
-                    user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == contact_user_id)
+                    user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == chat_contact.contact.fk_users_id)
                     for user_endpoint in user_endpoints:
                         notification_data = notifications.WebPushNotificationData()
                         notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
