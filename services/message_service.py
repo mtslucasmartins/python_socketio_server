@@ -10,21 +10,24 @@ import json
 
 
 def count_pending_messages(chat_id, contact_id):
-    count = db.session.execute("""
-        select count(message.server_id) from messages message
-            inner join messages_contacts messageContact
-            on (
-                message.server_id = messageContact.fk_messages_id
-                and
-                messageContact.fk_contacts_id = :contactId
-            )
-        where message.fk_chats_id = :chatId
-        and message.fk_contacts_id != :contactId
-        and (
-            messageContact.is_received = false
-            or
-            messageContact.is_seen = false
-        ) """, {'chatId': chat_id, 'contactId': contact_id}).scalar()
+    try:
+        count = db.session.execute("""
+            select count(message.server_id) from messages message
+                inner join messages_contacts messageContact
+                on (
+                    message.server_id = messageContact.fk_messages_id
+                    and
+                    messageContact.fk_contacts_id = :contactId
+                )
+            where message.fk_chats_id = :chatId
+            and message.fk_contacts_id != :contactId
+            and (
+                messageContact.is_received = false
+                or
+                messageContact.is_seen = false
+            ) """, {'chatId': chat_id, 'contactId': contact_id}).scalar()
+    except:
+        count = 1
 
     return count
 
