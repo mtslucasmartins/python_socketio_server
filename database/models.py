@@ -186,7 +186,7 @@ class Message(db.Model):
     def make_external_id(self):
         chat_id = self.fk_chats_id
         contact_id = self.fk_contacts_id
-        created_at = self.created_at
+        created_at = time.mktime(self.created_at.timetuple())*1e3 + self.created_at.microsecond/1e3
 
         print("""
             chat_id =     {}
