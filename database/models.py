@@ -183,6 +183,18 @@ class Message(db.Model):
     def __repr__(self):
         return str(json.dumps(self.as_json()))
 
+    def make_external_id(self):
+        chat_id = self.fk_chats_id
+        contact_id = self.fk_contacts_id
+        created_at = self.created_at
+
+        print("""
+            chat_id =     {}
+            contact_id =  {}
+            created_at =  {}
+        """.format(chat_id, contact_id, created_at))
+
+
     def as_json(self):
         json = {}
 

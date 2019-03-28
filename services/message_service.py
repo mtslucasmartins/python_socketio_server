@@ -34,6 +34,8 @@ def count_pending_messages(chat_id, contact_id):
 def create_message(message, user_id):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
 
+    message.make_external_id()
+
     # Inserts the message to the database, and flushes it in order to get the generated id.
     db.session.add(message)
     db.session.flush()
@@ -207,3 +209,17 @@ def set_seen_before_id(message_id, contact_id) -> None:
             .update({'status': message.status})
         db.session.commit()
 
+
+class MessageService:
+    """ Service for Messages """
+    def save(self, message):
+        """Saves a new message on database."""
+        print('Saving new message...')
+
+    def received(self, message):
+        """Updates message on database mark as received."""
+        print('Marking message as received by ...')
+
+    def read(self, message):
+        """Updates message on database mark as seen."""
+        print('Marking message as seen by ...')
