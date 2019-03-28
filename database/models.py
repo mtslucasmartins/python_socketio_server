@@ -223,8 +223,9 @@ class Message(db.Model):
                 self.created_at.microsecond / 1e3), BASE)
 
         external_id = "{}-{}-{}".format(
-            utilities.pad_left(chat_id, 12), utilities.pad_left(contact_id, 8),
-            utilities.pad_left(created_at, 12))
+            utilities.pad_left(chat_id, 12), 
+            utilities.pad_left(created_at, 8),
+            utilities.pad_left(contact_id, 12))
 
         self.external_id = external_id
 
