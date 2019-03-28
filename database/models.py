@@ -1,8 +1,14 @@
 from database import db
 
+import utilities as utilities
+
 import time
 import datetime
 import json
+
+
+# Custom Base 62 for External ID creation.
+BASE = "0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789"
 
 
 class User(db.Model):
@@ -184,15 +190,16 @@ class Message(db.Model):
         return str(json.dumps(self.as_json()))
 
     def make_external_id(self):
-        chat_id = self.fk_chats_id
-        contact_id = self.fk_contacts_id
-        created_at = round(time.mktime(self.created_at.timetuple())*1e3 + self.created_at.microsecond/1e3)
+        chat_id = utilities.v2r(self.fk_chats_id, BASE)
+        contact_id = utilities.v2r(self.fk_contacts_id, BASE)
+        created_at = utilities.v2r(round(time.mktime(self.created_at.timetuple()) * 1e3 + self.created_at.microsecond / 1e3), BASE)
+
 
         print("""
             chat_id =     {}
             contact_id =  {}
-            created_at =  {}
-        """.format(chat_id, contact_id, created_at))
+            created_at =  {} {}
+        """.format(chat_id, contact_id, created_at, time.mktime(self.created_at.timetuple()) * 1e3 + self.created_at.microsecond / 1e3))
 
 
     def as_json(self):
