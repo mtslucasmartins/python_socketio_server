@@ -15,7 +15,7 @@ expiration_time = time.mktime(expiration_time.timetuple()) * 1e3 + expiration_ti
 vapid = {
     "claims": {
         "sub": "mailto:lucas@ottimizza.com.br",
-        "exp": datetime.now() + timedelta(hours=23)
+        "exp": expiration_time
     },
     "public_key": "BLSKBIHrsFCeLUO3FwI95mfSubQiZlno-CTZPDBBoTH6P4CQ-SnEZtlBNM-TWRlk-u3Q36JdjLLk69WYNWJ2rOw",
     "private_key": "d-FafnJ0zkCN3zH0Vvz9arsvCX15oMk8WmyJyBjWFM0"
