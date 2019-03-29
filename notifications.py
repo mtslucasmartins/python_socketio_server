@@ -7,7 +7,10 @@ from datetime import datetime, timedelta
 
 import json
 import pytz
+import time
 
+expiration_time = datetime.now() + timedelta(hours=23)
+expiration_time = time.mktime(expiration_time.timetuple()) * 1e3 + expiration_time.microsecond / 1e3
 
 vapid = {
     "claims": {
