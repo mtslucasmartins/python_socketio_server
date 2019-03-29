@@ -64,10 +64,11 @@ class WebPushNotification:
             vapid_private_key = vapid.get("private_key")
             vapid_claims = vapid.get("claims")
 
-            print("Pushing Notification...\n")
-            print("  data              ...:  {}".format(data))
-            print("  vapid_private_key ...:  {}".format(vapid_private_key))
-            print("  vapid_claims      ...:  {}".format(json.dumps(vapid.get("claims"))))
+            print(">>> Pushing Notification...\n")
+            print("      endpoint          ...:  {}".format(json.dumps(subscription_info)))
+            print("      data              ...:  {}".format(data))
+            print("      vapid_private_key ...:  {}".format(vapid_private_key))
+            print("      vapid_claims      ...:  {}".format(json.dumps(vapid.get("claims"))))
             print("")
 
             wp.webpush(subscription_info=subscription_info, data=data, vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)

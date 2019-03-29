@@ -69,10 +69,10 @@ def create_message(message, user_id):
             if user_id != contact_user_id:
 
                 try:
-                    print('Counting pending messages...')
+                    print('>>> Counting pending messages...')
                     count = count_pending_messages(message.fk_chats_id, contact_id)
 
-                    print('Getting User Endpoints for Push...')
+                    print('>>> Getting User Endpoints for Push...')
                     user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == chat_contact.contact.fk_users_id)
                     for user_endpoint in user_endpoints:
                         notification_data = notifications.WebPushNotificationData()
