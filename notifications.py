@@ -1,14 +1,17 @@
-# from pywebpush import webpush, WebPushException
-
+import json
+import pytz
 import pywebpush as wp
-
+import time
 
 from datetime import datetime, timedelta
 
-import json
-import pytz
-import time
-
+# 
+# added expiration date to 23 hours from now,
+# if no expiration is specified, FCM will return a UnregisteredRegistration
+# because it forces a date by it's own.
+# 
+# https://github.com/web-push-libs/pywebpush/issues/79
+#
 expiration_time = datetime.now() + timedelta(hours=23)
 expiration_time = str(round(time.mktime(expiration_time.timetuple())))
 
@@ -55,7 +58,6 @@ class WebPushNotification:
         self.icon = icon
         self.tag = tag
         self.vibrate = vibrate
-
         self.data = data
         self.actions = []
 
@@ -75,7 +77,11 @@ class WebPushNotification:
             print("      vapid_claims      ...:  {}".format(json.dumps(vapid.get("claims"))))
             print("")
 
-            wp.webpush(subscription_info=subscription_info, data=data, vapid_private_key=vapid_private_key, vapid_claims=vapid_claims)
+            wp.webpush(
+                subscription_info=subscription_info, 
+                data=data, 
+                vapid_private_key=vapid_private_key, 
+                vapid_claims=vapid_claims)
         except wp.WebPushException as ex:
             print("I'm sorry, Dave, but I can't do that: {}", repr(ex))
             # Mozilla returns additional information in the body of the response.

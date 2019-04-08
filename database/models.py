@@ -152,13 +152,24 @@ class ChatContacts(db.Model):
     contact = db.relationship(
         'Contact', foreign_keys='ChatContacts.fk_contacts_id')
 
+    is_important = db.Column(
+        db.Boolean, unique=False, nullable=True, default=False)
+    closed_date = db.Column(db.Date(), unique=False)
+
     def __repr__(self):
         return str(json.dumps(self.as_json()))
 
     def as_json(self):
+        # 
+        closed_date = time.mktime(
+            self.closed_date.timetuple()
+        ) * 1e3 + self.closed_date.microsecond / 1e3
+
         return {
             "chat": self.chat.as_json(),
             "contact": self.contact.as_json(),
+            "isImportant": self.is_important,
+            "closedDate": closed_date
         }
 
 
@@ -223,8 +234,7 @@ class Message(db.Model):
                 self.created_at.microsecond / 1e3), BASE)
 
         external_id = "{}-{}-{}".format(
-            utilities.pad_left(chat_id, 12), 
-            utilities.pad_left(created_at, 8),
+            utilities.pad_left(chat_id, 12), utilities.pad_left(created_at, 8),
             utilities.pad_left(contact_id, 12))
 
         self.external_id = external_id

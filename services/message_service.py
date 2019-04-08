@@ -11,7 +11,8 @@ import json
 
 def count_pending_messages(chat_id, contact_id):
     try:
-        count = db.session.execute("""
+        count = db.session.execute(
+            """
             select count(message.server_id) from messages message
                 inner join messages_contacts messageContact
                 on (
@@ -25,34 +26,48 @@ def count_pending_messages(chat_id, contact_id):
                 messageContact.is_received = false
                 or
                 messageContact.is_seen = false
-            ) """, {'chatId': chat_id, 'contactId': contact_id}).scalar()
+            ) """, {
+                'chatId': chat_id,
+                'contactId': contact_id
+            }).scalar()
     except:
         count = 1
 
     return count
 
+
 def create_message(message, user_id):
     """Inserts a message to database, and sends it to the contacts related to the conversation."""
-
     message.make_external_id()
 
     # Inserts the message to the database, and flushes it in order to get the generated id.
     db.session.add(message)
     db.session.flush()
     db.session.commit()
-    
+
     # gets the reference by id from database.
-    message = models.Message.query.filter(models.Message.server_id == message.server_id).first()
-    
+    message = models.Message.query.filter(
+        models.Message.server_id == message.server_id).first()
+
     # Search for contacts related to the conversation.
-    chat_contacts = models.ChatContacts.query.filter(models.ChatContacts.fk_chats_id == message.fk_chats_id)
+    chat_contacts = models.ChatContacts.query.filter(
+        models.ChatContacts.fk_chats_id == message.fk_chats_id)
 
     # Iterates the conversation contacts and inserts a row in message_contacts.
     for chat_contact in chat_contacts:
         contact_id = chat_contact.contact.id
         if chat_contact.contact.fk_users_id is not None:
+
+            if chat_contact.closed_date is not None:
+                db.session.query(models.ChatContacts) \
+                  .filter(models.ChatContacts.fk_chats_id == message.fk_chats_id) \
+                  .filter(models.ChatContacts.fk_chats_id == message.fk_contacts_id) \
+                    .update({'closed_date': None})
+                db.session.commit()
+
             contact_user_id = str(round(chat_contact.contact.fk_users_id))
-            message_contact = models.MessageContact(message.server_id, chat_contact.contact.id)
+            message_contact = models.MessageContact(message.server_id,
+                                                    chat_contact.contact.id)
 
             db.session.add(message_contact)
             db.session.commit()
@@ -60,9 +75,11 @@ def create_message(message, user_id):
             # sends the message to the user, if connected.
             if contact_user_id in sockets.sockets:
                 try:
-                    sockets.sockets[contact_user_id].emit('message::created', message.as_json())
+                    sockets.sockets[contact_user_id].emit(
+                        'message::created', message.as_json())
                 except Exception as ex:
-                    print("""Exception at message_service.py 'create_message'""")
+                    print(
+                        """Exception at message_service.py 'create_message'""")
                     print(ex)
 
             # Web Push Notifications
@@ -70,13 +87,18 @@ def create_message(message, user_id):
 
                 try:
                     print('>>> Counting pending messages...')
-                    count = count_pending_messages(message.fk_chats_id, contact_id)
+                    count = count_pending_messages(message.fk_chats_id,
+                                                   contact_id)
 
                     print('>>> Getting User Endpoints for Push...')
-                    user_endpoints = models.UserEndpoint.query.filter(models.UserEndpoint.fk_users_id == chat_contact.contact.fk_users_id)
+                    user_endpoints = models.UserEndpoint.query.filter(
+                        models.UserEndpoint.fk_users_id ==
+                        chat_contact.contact.fk_users_id)
                     for user_endpoint in user_endpoints:
-                        notification_data = notifications.WebPushNotificationData()
-                        notification_action = notifications.WebPushNotificationAction("teste", "Go to the site")
+                        notification_data = notifications.WebPushNotificationData(
+                        )
+                        notification_action = notifications.WebPushNotificationAction(
+                            "teste", "Go to the site")
 
                         notification_title = message.chat.subject
                         notification_body = "Novas Mensagens"
@@ -84,13 +106,17 @@ def create_message(message, user_id):
                         notification_tag = str(message.chat.id)
 
                         if count > 1:
-                            notification_body = "Você possui {} novas mensagens!".format(count)
+                            notification_body = "Você possui {} novas mensagens!".format(
+                                count)
                         else:
                             notification_body = "Você possui uma nova mensagem!"
 
-                        notification = notifications.WebPushNotification(notification_title, notification_body, notification_icon, notification_tag, notification_data)
+                        notification = notifications.WebPushNotification(
+                            notification_title, notification_body,
+                            notification_icon, notification_tag,
+                            notification_data)
                         notification.append_action(notification_action)
-                        
+
                         notification.push(json.loads(user_endpoint.endpoint))
                 except Exception as e:
                     print(e)
@@ -98,8 +124,10 @@ def create_message(message, user_id):
 
 def update_message_set_received(message_id, contact_id) -> None:
     """Sets a Message as Received by Message Id and Contact Id."""
-    message = models.Message.query.filter(models.Message.server_id == message_id).first()
-    contact = models.Contact.query.filter(models.Contact.id == contact_id).first()
+    message = models.Message.query.filter(
+        models.Message.server_id == message_id).first()
+    contact = models.Contact.query.filter(
+        models.Contact.id == contact_id).first()
 
     db.session.query(models.MessageContact) \
         .filter(models.MessageContact.fk_messages_id == message_id,
@@ -127,16 +155,21 @@ def update_message_set_received(message_id, contact_id) -> None:
                 # sends the message to the user, if connected.
                 if user_id in sockets.sockets:
                     try:
-                        sockets.sockets[user_id].emit('message::updated', message.as_json())
+                        sockets.sockets[user_id].emit('message::updated',
+                                                      message.as_json())
                     except Exception as ex:
-                        print("""Exception at message_service.py 'update_message_set_received'""")
+                        print(
+                            """Exception at message_service.py 'update_message_set_received'"""
+                        )
                         print(ex)
 
 
 def update_message_set_seen(message_id, contact_id) -> None:
     """Sets a Message as Read by Message Id and Contact Id."""
-    message = models.Message.query.filter(models.Message.server_id == message_id).first()
-    contact = models.Contact.query.filter(models.Contact.id == contact_id).first()
+    message = models.Message.query.filter(
+        models.Message.server_id == message_id).first()
+    contact = models.Contact.query.filter(
+        models.Contact.id == contact_id).first()
 
     db.session.query(models.MessageContact) \
         .filter(models.MessageContact.fk_messages_id == message_id,
@@ -164,16 +197,21 @@ def update_message_set_seen(message_id, contact_id) -> None:
                 # sends the message to the user, if connected.
                 if user_id in sockets.sockets:
                     try:
-                        sockets.sockets[user_id].emit('message::updated', message.as_json())
+                        sockets.sockets[user_id].emit('message::updated',
+                                                      message.as_json())
                     except Exception as ex:
-                        print("""Exception at message_service.py 'update_message_set_seen'""")
+                        print(
+                            """Exception at message_service.py 'update_message_set_seen'"""
+                        )
                         print(ex)
 
 
 def set_received_before_id(message_id, contact_id) -> None:
     """Sets a Message as Read by Message Id and Contact Id."""
-    message = models.Message.query.filter(models.Message.server_id == message_id).first()
-    contact = models.Contact.query.filter(models.Contact.id == contact_id).first()
+    message = models.Message.query.filter(
+        models.Message.server_id == message_id).first()
+    contact = models.Contact.query.filter(
+        models.Contact.id == contact_id).first()
 
     db.session.query(models.MessageContact) \
         .filter(models.MessageContact.fk_messages_id < message_id,
@@ -192,8 +230,10 @@ def set_received_before_id(message_id, contact_id) -> None:
 
 def set_seen_before_id(message_id, contact_id) -> None:
     """Sets a Message as Received by Message Id and Contact Id."""
-    message = models.Message.query.filter(models.Message.server_id == message_id).first()
-    contact = models.Contact.query.filter(models.Contact.id == contact_id).first()
+    message = models.Message.query.filter(
+        models.Message.server_id == message_id).first()
+    contact = models.Contact.query.filter(
+        models.Contact.id == contact_id).first()
 
     db.session.query(models.MessageContact) \
         .filter(models.MessageContact.fk_messages_id < message_id,
@@ -212,6 +252,7 @@ def set_seen_before_id(message_id, contact_id) -> None:
 
 class MessageService:
     """ Service for Messages """
+
     def save(self, message):
         """Saves a new message on database."""
         print('Saving new message...')
