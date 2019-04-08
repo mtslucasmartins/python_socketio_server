@@ -61,7 +61,6 @@ def create_message(message, user_id):
             if chat_contact.closed_date is not None:
                 db.session.query(models.ChatContacts) \
                   .filter(models.ChatContacts.fk_chats_id == message.fk_chats_id) \
-                  .filter(models.ChatContacts.fk_contacts_id == message.fk_contacts_id) \
                     .update({'closed_date': None})
                 db.session.commit()
 
